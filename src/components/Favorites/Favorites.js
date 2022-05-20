@@ -6,7 +6,8 @@ import './Favorites.css';
 
 class Favorites extends Component {
     state = {
-        title: ''
+        title: '',
+        id: ''
         // movies: [
         //     { imdbID: 'tt0068646', title: 'The Godfather', year: 1972 }
         // ]
@@ -17,28 +18,31 @@ class Favorites extends Component {
     removeItem(id) {
         store.dispatch({ type: "DELETE_FROM_FAVORITE", payload: id })
     }
-    postList = () => {
-        // console.log(1)
-        // fetch('http://www.omdbapi.com/?apikey=1fa733f1', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-type': 'application/json'
-        //     },
-        //     body: JSON.stringify({
-        //         "title": "Example List",
-        //         "movies": [
-        //             "tt0068646",
-        //             "tt0098019"
-        //         ]
-
-        //     })
-        // }).then(response => response.json())
-        //     .then(data => {
-        //         console.log = (data);
-        //     })
-        //     .catch(data => {
-        //         console.log(data)
-        //     });
+    postList = (e) => {
+        console.log(1)
+        this.link.current.style.display="block";
+        e.target.style.display="none";
+        
+        fetch('https://acb-api.algoritmika.org/api/movies/list/', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                "title": this.state.title,
+                "movies":this.props.favMovie
+            })
+        }).then(response => response.json())
+            .then(data => {
+                this.setState({ id: data.id })
+            })
+            .catch(data => {
+                console.log(data)
+            });
+    }
+    constructor(props) {
+        super(props);
+        this.link = React.createRef();
     }
     render() {
         return (
@@ -51,7 +55,7 @@ class Favorites extends Component {
                     ))}
                 </ul>
                 <button type="button" className="favorites__save" disabled={!this.state.title} onClick={this.postList}>Сохранить список</button>
-                <a href="/list/5508daa0-34ad-45be-8b09-e704c9e7b389">Перейти к списку</a>
+                <a ref={this.link} className='link-to-listPage' href={`/list/${this.state.id}`}>Перейти к списку</a>
             </div>
         );
     }

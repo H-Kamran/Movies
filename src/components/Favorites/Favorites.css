@@ -44,3 +44,7 @@
     color: #ffeedb;
     opacity: 0.5;
 }
+
+.link-to-listPage{
+    display: none;
+}
