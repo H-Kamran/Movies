@@ -13,12 +13,15 @@ class SearchBox extends Component {
     searchBoxSubmitHandler = (e) => {
         e.preventDefault();
         fetch(`http://www.omdbapi.com/?s=${this.state.searchLine}&apikey=1fa733f1`)
-        .then(data=>data.json())
-        .then(res=>res.Search)
-        .then(arr=>arr.forEach(item=>{store.dispatch({type:"ADD_MOVIE",payload:item})}))
-        .catch(data=>{
-            console.log(data)
-        });
+            .then(data => data.json())
+            .then(res => res.Search)
+            .then(arr => {
+                store.dispatch({ type: "DELETE_MOVIE"})
+                arr.forEach(item => { store.dispatch({ type: "ADD_MOVIE", payload: item }) })
+            })
+            .catch(data => {
+                console.log(data)
+            });
     }
     render() {
 
@@ -49,7 +52,7 @@ class SearchBox extends Component {
         );
     }
 }
- const mapStateToProps=(state)=>{
-     return {allMovie:state.allMovie}
- }
+const mapStateToProps = (state) => {
+    return { allMovie: state.allMovie }
+}
 export default connect(mapStateToProps)(SearchBox);
