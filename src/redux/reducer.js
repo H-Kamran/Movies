@@ -1,11 +1,15 @@
 const initialState = {
     allMovie: [],
     favMovie: [],
+
 }
 
 export const reducer = (state = initialState, action) => {
     let allMovie, favMovie, id;
     switch (action.type) {
+        case "DELETE_MOVIE":
+            allMovie = []
+            return { ...state, allMovie }
         case "ADD_MOVIE":
             allMovie = [...state.allMovie, action.payload]
             return { ...state, allMovie }
