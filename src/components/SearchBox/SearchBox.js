@@ -16,8 +16,8 @@ class SearchBox extends Component {
             .then(data => data.json())
             .then(res => res.Search)
             .then(arr => {
-                store.dispatch({ type: "DELETE_MOVIE"})
-                arr.forEach(item => { store.dispatch({ type: "ADD_MOVIE", payload: item }) })
+                this.props.deleteMovie();
+                arr.forEach(item => { this.props.addMovie(item) })
             })
             .catch(data => {
                 console.log(data)
@@ -52,7 +52,19 @@ class SearchBox extends Component {
         );
     }
 }
+// const mapDispatchToProps = dispatch => ({
+//     searchBoxSubmitHandler: (id) => dispatch(searchBoxSubmitHandler(id))
+//   });
+
 const mapStateToProps = (state) => {
     return { allMovie: state.allMovie }
 }
-export default connect(mapStateToProps)(SearchBox);
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        deleteMovie: () => dispatch({ type: 'DELETE_MOVIE' }),
+        addMovie: (movie) => dispatch({ type: 'ADD_MOVIE', payload: movie })
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBox);

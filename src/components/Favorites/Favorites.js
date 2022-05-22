@@ -7,7 +7,8 @@ import './Favorites.css';
 class Favorites extends Component {
     state = {
         title: '',
-        id: ''
+        id: '',
+        disableLi: false
         // movies: [
         //     { imdbID: 'tt0068646', title: 'The Godfather', year: 1972 }
         // ]
@@ -15,14 +16,13 @@ class Favorites extends Component {
     handle = (e) => {
         this.setState({ title: e.target.value });
     }
-    removeItem(id) {
-        store.dispatch({ type: "DELETE_FROM_FAVORITE", payload: id })
-    }
+    // removeItem(id) {
+    //     store.dispatch({ type: "DELETE_FROM_FAVORITE", payload: id })
+    // }
     postList = (e) => {
-        console.log(1)
-        this.link.current.style.display="block";
-        e.target.style.display="none";
-        
+        this.link.current.style.display = "block";
+        e.target.style.display = "none";
+
         fetch('https://acb-api.algoritmika.org/api/movies/list/', {
             method: 'POST',
             headers: {
@@ -30,11 +30,11 @@ class Favorites extends Component {
             },
             body: JSON.stringify({
                 "title": this.state.title,
-                "movies":this.props.favMovie
+                "movies": this.props.favMovie
             })
         }).then(response => response.json())
             .then(data => {
-                this.setState({ id: data.id })
+                this.setState({ id: data.id, disableLi: true })
             })
             .catch(data => {
                 console.log(data)
@@ -51,7 +51,7 @@ class Favorites extends Component {
                 <ul className="favorites__list">
                     {this.props.favMovie.map((item) => (
                         <li key={item.imdbID} className="favorites__list-item">{item.Title}&nbsp;({item.Year})
-                            <button onClick={() => this.removeItem(item.imdbID)}>X</button></li>
+                            <button disabled={this.state.disableLi} onClick={() => this.props.removeItem(item.imdbID)}>X</button></li>
                     ))}
                 </ul>
                 <button type="button" className="favorites__save" disabled={!this.state.title} onClick={this.postList}>Сохранить список</button>
@@ -61,8 +61,14 @@ class Favorites extends Component {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        removeItem: (id) => dispatch({ type: 'DELETE_FROM_FAVORITE', payload: id })
+    }
+}
+
 // export default Favorites;
 const mapStateToProps = (state) => {
     return ({ favMovie: state.favMovie })
 }
-export default connect(mapStateToProps)(Favorites);
+export default connect(mapStateToProps, mapDispatchToProps)(Favorites);
